@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Jonathan-Perry-s-workspace-9gc2t7.us-east-1.xata.sh/db/anki-video",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}

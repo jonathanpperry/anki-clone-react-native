@@ -1,23 +1,88 @@
-import { View, Text } from "react-native";
-import React, { useEffect } from "react";
-import { getMySets } from "../../data/api";
+import {
+  FlatList,
+  ListRenderItem,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Set, getMySets } from "../../data/api";
+import { defaultStyleSheet } from "../../constants/Styles";
+import { Link } from "expo-router";
+import Colors from "../../constants/Colors";
 
 const Page = () => {
+  const [sets, setSets] = useState<
+    { id: string; set: Set; canEdit: boolean }[]
+  >([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   useEffect(() => {
     loadSets();
   });
 
   const loadSets = async () => {
     const data = await getMySets();
-    // setSets(data);
-    console.log("the sets that are favorite: ", data);
+    setSets(data);
   };
 
+  const renderSetRow: ListRenderItem<{
+    id: string;
+    set: Set;
+    canEdit: boolean;
+  }> = ({ item: { set, canEdit } }) => (
+    <View style={styles.setRow}>
+      <View>
+        <Text style={styles.rowTitle}>{set.title}</Text>
+
+        {canEdit && (
+          <Link href={`(modals)/(cards)/${set.id}`} asChild>
+            <TouchableOpacity style={defaultStyleSheet.button}>
+              <Text style={defaultStyleSheet.buttonText}>Edit</Text>
+            </TouchableOpacity>
+          </Link>
+        )}
+      </View>
+    </View>
+  );
+
   return (
-    <View>
-      <Text>User Sets</Text>
+    <View style={defaultStyleSheet.container}>
+      {!sets.length && (
+        <Link href={"/(tabs)/search"} asChild>
+          <TouchableOpacity style={{}}>
+            <Text
+              style={{ textAlign: "center", padding: 20, color: "#3f3f3f" }}
+            >
+              Add your first set!
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      )}
+      <FlatList
+        data={sets}
+        renderItem={renderSetRow}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={loadSets} />
+        }
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  setRow: {
+    margin: 8,
+    padding: 16,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+  },
+  rowTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+});
 
 export default Page;

@@ -9,7 +9,7 @@ import {
   Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Set, getMySets, getSets } from "../../data/api";
+import { Set, getSets } from "../../data/api";
 import { defaultStyleSheet } from "../../constants/Styles";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
